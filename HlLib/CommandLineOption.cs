@@ -36,13 +36,22 @@ namespace HlLib
                 {
                     var name = (!string.IsNullOrEmpty(attribute.name)) ? attribute.name : prop.Name;
                     var argKey = argDic.Keys.FirstOrDefault(key => key == name);
+                    var argValue = (argKey != null) ? argDic[argKey] : null;
 
-                    var argValue = argDic[argKey];
                     if (prop.PropertyType.IsArray)
                     {
-                        var values = argValue.Split(';')
-                                .Select(v => ConvertArgType(attribute, prop.PropertyType.GetElementType(), argKey, v))
-                                .ToArray();
+                        object[] values;
+                        if (argKey != null)
+                        {
+                            values = argValue.Split(';')
+                                    .Select(v => ConvertArgType(attribute, prop.PropertyType.GetElementType(), argKey, v))
+                                    .ToArray();
+                        }
+                        else
+                        {
+                            values = new object[] { };
+                        }
+
                         var array = Array.CreateInstance(prop.PropertyType.GetElementType(), values.Length);
                         for (var i = 0; i < values.Length; ++i)
                         {
