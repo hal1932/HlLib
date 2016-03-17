@@ -86,7 +86,7 @@ namespace HlLib
             else if (type == typeof(long)) return (value != null) ? long.Parse(value) : GetDefaultValue<long>(attribute);
             else if (type == typeof(ulong)) return (value != null) ? ulong.Parse(value) : GetDefaultValue<ulong>(attribute);
             else if (type == typeof(float)) return (value != null) ? short.Parse(value) : GetDefaultValue<float>(attribute);
-            else throw new ArgumentException(string.Format("the supported type is ValueType, string, and decimal: {0}, {1}", name, type.Name));
+            else throw new ArgumentException(string.Format("the supported types are ValueType, string, and decimal: {0}, {1}", name, type.Name));
         }
 
         private T GetDefaultValue<T>(CommandLineArgAttribute attribute)
