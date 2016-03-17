@@ -14,12 +14,12 @@ namespace HlLib
         public object defaultValue;
     }
 
-    public class CommandLineOption<TOption>
-        where TOption : class, new()
+    public class CommandLineOptions<TOptions>
+        where TOptions : class, new()
     {
-        public TOption Parse(string[] args)
+        public TOptions Parse(string[] args)
         {
-            var result = new TOption();
+            var result = new TOptions();
 
             var argDic = args.Where(arg => arg.StartsWith("/"))
                 .Select(arg => arg.TrimStart('/').Split(':'))
@@ -27,7 +27,7 @@ namespace HlLib
                     arg => arg[0],
                     arg => (arg.Length == 2) ? arg[1] : null);
 
-            var props = typeof(TOption).GetProperties()
+            var props = typeof(TOptions).GetProperties()
                 .Where(p => p.CanRead && p.CanWrite);
             foreach (var prop in props)
             {
