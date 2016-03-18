@@ -17,7 +17,6 @@ namespace HlLib
         /// <param name="endIndex">-1の場合はsource.Lengthが指定されたとみなす</param>
         /// <returns></returns>
         public static T[] Slice<T>(this T[] source, int startIndex, int endIndex = -1)
-            where T : new()
         {
             var count = (endIndex != -1) ?
                 endIndex - startIndex : source.Length - startIndex;
