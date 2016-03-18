@@ -13,7 +13,24 @@ namespace HlLib.CommandLine
     public class CommandLineOptions<TOptions>
         where TOptions : class, new()
     {
+        /// <summary>
+        /// コマンドライン引数を解析してTOptionsにいれて返す
+        /// </summary>
+        /// <param name="args">コマンドライン引数</param>
+        /// <returns></returns>
         public TOptions Parse(string[] args)
+        {
+            string[] dummy;
+            return Parse(args, out dummy);
+        }
+
+        /// <summary>
+        /// コマンドライン引数を解析してTOptionsにいれて返す
+        /// </summary>
+        /// <param name="args">コマンドライン引数</param>
+        /// <param name="rest">TOptionsのメンバに合致しなかった引数</param>
+        /// <returns></returns>
+        public TOptions Parse(string[] args, out string[] rest)
         {
             var result = new TOptions();
 
@@ -25,6 +42,7 @@ namespace HlLib.CommandLine
 
             var props = typeof(TOptions).GetProperties()
                 .Where(p => p.CanRead && p.CanWrite);
+            var restArgList = ((string[])args.Clone()).ToList();
             foreach (var prop in props)
             {
                 var attributes = prop.GetCustomAttributes(typeof(CommandLineArgAttribute), true);
@@ -60,9 +78,16 @@ namespace HlLib.CommandLine
                         var value = ConvertArgType(attribute, prop.PropertyType, argKey, argValue);
                         prop.SetValue(result, value);
                     }
+
+                    var handledArg = restArgList.FirstOrDefault(arg => arg.StartsWith("/" + name));
+                    if (handledArg != null)
+                    {
+                        restArgList.Remove(handledArg);
+                    }
                 }
             }
 
+            rest = restArgList.ToArray();
             return result;
         }
 
