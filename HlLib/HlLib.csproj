@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandLine\CommandLineOption.cs" />
+    <Compile Include="extensions\ArrayExtensions.cs" />
     <Compile Include="IO\FileReadStream.cs" />
     <Compile Include="IO\FileWriteStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
