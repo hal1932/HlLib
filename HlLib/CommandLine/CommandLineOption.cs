@@ -13,6 +13,10 @@ namespace HlLib.CommandLine
     public class CommandLineOptions<TOptions>
         where TOptions : class, new()
     {
+        public char OptionStartChar { get; set; } = '/';
+        public char OptionSplitChar { get; set; } = '=';
+        public char OptionArraySeparatorChar { get; set; } = ';';
+
         /// <summary>
         /// コマンドライン引数を解析してTOptionsにいれて返す
         /// </summary>
@@ -34,12 +38,15 @@ namespace HlLib.CommandLine
         {
             var result = new TOptions();
 
-            var argDic = args.Where(arg => arg.StartsWith("/"))
-                .Select(arg => arg.TrimStart('/').Split(':'))
+            // StartCharとSplitCharにしたがって引数を分解
+            var argDic = args.Where(arg => arg.StartsWith(OptionStartChar.ToString()))
+                .Select(arg => arg.TrimStart(OptionStartChar).Split(OptionSplitChar))
                 .ToDictionary(
                     arg => arg[0],
                     arg => (arg.Length == 2) ? arg[1] : null);
 
+            // TOptionsのプロパティに合致する引数を拾ってresultに設定
+            // 拾われなかったのはrestArgListにいれる
             var props = typeof(TOptions).GetProperties()
                 .Where(p => p.CanRead && p.CanWrite);
             var restArgList = ((string[])args.Clone()).ToList();
@@ -52,12 +59,14 @@ namespace HlLib.CommandLine
                     var argKey = argDic.Keys.FirstOrDefault(key => key == name);
                     var argValue = (argKey != null) ? argDic[argKey] : null;
 
+                    // プロパティが配列型だったら、ArraySeparatorCharにしたがって分割
+                    // そうでなければそのまま拾う
                     if (prop.PropertyType.IsArray)
                     {
                         object[] values;
                         if (argKey != null)
                         {
-                            values = argValue.Split(';')
+                            values = argValue.Split(OptionArraySeparatorChar)
                                     .Select(v => ConvertArgType(attribute, prop.PropertyType.GetElementType(), argKey, v))
                                     .ToArray();
                         }
@@ -79,7 +88,7 @@ namespace HlLib.CommandLine
                         prop.SetValue(result, value);
                     }
 
-                    var handledArg = restArgList.FirstOrDefault(arg => arg.StartsWith("/" + name));
+                    var handledArg = restArgList.FirstOrDefault(arg => arg.StartsWith(OptionStartChar + name));
                     if (handledArg != null)
                     {
                         restArgList.Remove(handledArg);
