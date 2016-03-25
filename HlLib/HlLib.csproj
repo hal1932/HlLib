@@ -42,8 +42,7 @@
   <ItemGroup>
     <Compile Include="CommandLine\CommandLineOption.cs" />
     <Compile Include="extensions\ArrayExtensions.cs" />
-    <Compile Include="IO\FileReadStream.cs" />
-    <Compile Include="IO\FileWriteStream.cs" />
+    <Compile Include="IO\FileStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
