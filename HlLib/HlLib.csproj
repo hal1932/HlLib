@@ -53,6 +53,8 @@
     <Compile Include="extensions\IEnumerableExtensions.cs" />
     <Compile Include="IO\FileStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VersionControl\GitCommit.cs" />
+    <Compile Include="VersionControl\GitFileStatus.cs" />
     <Compile Include="VersionControl\GitRepository.cs" />
     <Compile Include="VersionControl\Commit.cs" />
     <Compile Include="VersionControl\IRepository.cs" />
