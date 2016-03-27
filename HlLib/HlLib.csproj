@@ -55,10 +55,10 @@
     <Compile Include="IO\FileStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VersionControl\FileUpdateResult.cs" />
-    <Compile Include="VersionControl\GitCommit.cs" />
-    <Compile Include="VersionControl\GitFileStatus.cs" />
-    <Compile Include="VersionControl\GitFileUpdateResult.cs" />
-    <Compile Include="VersionControl\GitRepository.cs" />
+    <Compile Include="VersionControl\git\GitCommit.cs" />
+    <Compile Include="VersionControl\git\GitFileStatus.cs" />
+    <Compile Include="VersionControl\git\GitFileUpdateResult.cs" />
+    <Compile Include="VersionControl\git\GitRepository.cs" />
     <Compile Include="VersionControl\Commit.cs" />
     <Compile Include="VersionControl\IRepository.cs" />
     <Compile Include="VersionControl\FileStatus.cs" />
