@@ -13,10 +13,10 @@ namespace test
         {
             var git = new Git(@"D:\home\Documents\Visual Studio 2015\Projects\HlLib");
 
-            foreach (var commit in git.QueryCommits())
+            foreach (GitCommit commit in git.QueryCommits())
             {
                 Console.WriteLine(commit);
-                foreach (var diff in (commit as GitCommit)?.QueryFileUpdates())
+                foreach (var diff in commit.QueryFileUpdates())
                 {
                     Console.WriteLine("\t" + diff);
                 }
