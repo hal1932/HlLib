@@ -64,6 +64,10 @@ namespace HlLib.VersionControl
                         yield return new FileStatus(State.Deleted, update.OldPath);
                         yield return new FileStatus(State.Added, update.Path);
                         break;
+
+                    default:
+                        yield return new FileStatus(State.Unknown, update.Path);
+                        break;
                 }
             }
         }
