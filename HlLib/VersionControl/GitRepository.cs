@@ -94,6 +94,12 @@ namespace HlLib.VersionControl
         public bool UndoChanges(params string[] paths)
         {
             // checkout [files]
+            if (paths.Length == 0)
+            {
+                return true;
+            }
+
+            _repo.CheckoutPaths(_repo.Head.CanonicalName, paths);
             return false;
         }
 
