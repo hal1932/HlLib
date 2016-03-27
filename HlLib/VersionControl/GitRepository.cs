@@ -64,26 +64,31 @@ namespace HlLib.VersionControl
 
         public bool AddFiles(params string[] paths)
         {
+            // add
             return false;
         }
 
         public bool CommitChanges(string message)
         {
+            // commit
             return false;
         }
 
         public bool UndoChanges(params string[] paths)
         {
+            // checkout [files]
             return false;
         }
 
         public bool Checkout(string branch)
         {
+            // checkout [branch]
             return false;
         }
 
         public bool Push(string destBranch, string sourceBranch = null)
         {
+            // push
             return false;
         }
 
