@@ -12,8 +12,8 @@
 
     public abstract class FileStatus
     {
-        public State State { get; internal set; }
-        public string FilePath { get; internal set; }
+        public State State { get; protected set; }
+        public string FilePath { get; protected set; }
 
         internal FileStatus(State state, string filePath)
         {

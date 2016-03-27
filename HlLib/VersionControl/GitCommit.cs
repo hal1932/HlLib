@@ -37,33 +37,33 @@ namespace HlLib.VersionControl
                 switch (update.Status)
                 {
                     case ChangeKind.Added:
-                        yield return new FileStatus(State.Added, update.Path);
+                        yield return new GitFileStatus(State.Added, update.Path);
                         break;
 
                     case ChangeKind.Conflicted:
-                        yield return new FileStatus(State.Conflicted, update.Path);
+                        yield return new GitFileStatus(State.Conflicted, update.Path);
                         break;
 
                     case ChangeKind.Deleted:
-                        yield return new FileStatus(State.Deleted, update.Path);
+                        yield return new GitFileStatus(State.Deleted, update.Path);
                         break;
 
                     case ChangeKind.Modified:
-                        yield return new FileStatus(State.Modified, update.Path);
+                        yield return new GitFileStatus(State.Modified, update.Path);
                         break;
 
                     case ChangeKind.Renamed:
-                        yield return new FileStatus(State.Deleted, update.OldPath);
-                        yield return new FileStatus(State.Added, update.Path);
+                        yield return new GitFileStatus(State.Deleted, update.OldPath);
+                        yield return new GitFileStatus(State.Added, update.Path);
                         break;
 
                     case ChangeKind.TypeChanged:
-                        yield return new FileStatus(State.Deleted, update.OldPath);
-                        yield return new FileStatus(State.Added, update.Path);
+                        yield return new GitFileStatus(State.Deleted, update.OldPath);
+                        yield return new GitFileStatus(State.Added, update.Path);
                         break;
 
                     default:
-                        yield return new FileStatus(State.Unknown, update.Path);
+                        yield return new GitFileStatus(State.Unknown, update.Path);
                         break;
                 }
             }

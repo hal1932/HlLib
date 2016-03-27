@@ -5,13 +5,9 @@ namespace HlLib.VersionControl
 {
     public class GitFileStatus : FileStatus
     {
-        public StatusEntry StatusEntry { get; private set; }
-
-        internal GitFileStatus(StatusEntry entry, State state)
-            : base(state, entry.FilePath)
-        {
-            StatusEntry = entry;
-        }
+        internal GitFileStatus(State state, string filepath)
+            : base(state, filepath)
+        { }
 
         internal static State GetState(StatusEntry entry)
         {
