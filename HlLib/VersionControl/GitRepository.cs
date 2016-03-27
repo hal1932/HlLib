@@ -13,6 +13,7 @@ namespace HlLib.VersionControl
             _repo = new Repository(path);
         }
 
+        #region IRepository
         public void SetCredentials(string username, string email, string password)
         {
             _username = username;
@@ -98,17 +99,39 @@ namespace HlLib.VersionControl
             _repo.CheckoutPaths(_repo.Head.CanonicalName, paths);
             return false;
         }
+        #endregion
 
-        public bool Checkout(string branch, bool createOnLocal = false)
+        public IEnumerable<string> QueryLocalBranches()
+        {
+            return _repo.Branches.Where(branchObj => !branchObj.IsRemote)
+                .Select(branchObj => branchObj.CanonicalName);
+        }
+
+        public IEnumerable<string> QueryRemoteBranches()
+        {
+            return _repo.Branches.Where(branchObj => branchObj.IsRemote)
+                .Select(branchObj => branchObj.CanonicalName);
+        }
+
+        public void CreateLocalBranch(string branch)
+        {
+            _repo.CreateBranch(branch);
+        }
+
+        public void DeleteLocalBranch(string branch)
+        {
+            _repo.Branches.Remove(branch);
+        }
+
+        public void Checkout(string branch, bool createOnLocal = false)
         {
             // checkout [branch]
             var branchObj = (createOnLocal) ?
                 _repo.CreateBranch(branch) : _repo.Branches[branch];
             branchObj = _repo.Checkout(branchObj);
-            return true;
         }
 
-        public bool Push(string branch = null)
+        public void Push(string branch = null)
         {
             // push
             var branchObj = string.IsNullOrEmpty(branch) ?
@@ -121,7 +144,6 @@ namespace HlLib.VersionControl
             };
 
             _repo.Network.Push(branchObj, options);
-            return true;
         }
 
         private Signature CreateSignature()
