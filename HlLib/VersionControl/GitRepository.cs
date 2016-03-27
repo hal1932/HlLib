@@ -56,9 +56,8 @@ namespace HlLib.VersionControl
                     },
                 },
             };
-            var signature = new Signature(_username, _email, new DateTimeOffset(DateTime.Now));
-            var result = _repo.Network.Pull(signature, options);
 
+            var result = _repo.Network.Pull(CreateSignature(), options);
             return new GitFileUpdateResult(result, _repo);
         }
 
@@ -72,10 +71,24 @@ namespace HlLib.VersionControl
             return true;
         }
 
-        public bool CommitChanges(string message)
+        public FileUpdateResult CommitChanges(string message, params string[] paths)
         {
             // commit
-            return false;
+            if (paths.Length == 0)
+            {
+                return new GitFileUpdateResult();
+            }
+
+            foreach (var path in paths)
+            {
+                _repo.Stage(path);
+            }
+
+            var author = CreateSignature();
+            var commiter = author;
+
+            var result = _repo.Commit(message, author, commiter);
+            return new GitFileUpdateResult(result, _repo);
         }
 
         public bool UndoChanges(params string[] paths)
@@ -94,6 +107,11 @@ namespace HlLib.VersionControl
         {
             // push
             return false;
+        }
+
+        private Signature CreateSignature()
+        {
+            return new Signature(_username, _email, new DateTimeOffset(DateTime.Now));
         }
 
         #region IDisposable

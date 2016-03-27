@@ -9,6 +9,8 @@ namespace HlLib.VersionControl
 {
     public class GitFileUpdateResult : FileUpdateResult
     {
+        internal GitFileUpdateResult() { }
+
         internal GitFileUpdateResult(MergeResult result, Repository repo)
         {
             _commit = result.Commit;
@@ -17,9 +19,17 @@ namespace HlLib.VersionControl
             Conflicts = (result.Status & MergeStatus.Conflicts) == MergeStatus.Conflicts;
         }
 
+        internal GitFileUpdateResult(LibGit2Sharp.Commit commit, Repository repo)
+        {
+            _commit = commit;
+            _repo = repo;
+        }
+
         public override IEnumerable<FileStatus> QueryFileStatuses()
         {
-            return new GitCommit(_commit, _repo).QueryFileUpdates();
+            return (_commit != null) ?
+                new GitCommit(_commit, _repo).QueryFileUpdates()
+                : Enumerable.Empty<FileStatus>();
         }
 
         private LibGit2Sharp.Commit _commit;

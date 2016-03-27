@@ -10,7 +10,7 @@ namespace HlLib.VersionControl
         void SetCredentials(string username, string email, string password);
         FileUpdateResult UpdateLocalFiles();
         bool AddFiles(params string[] paths);
-        bool CommitChanges(string message);
+        FileUpdateResult CommitChanges(string message, params string[] paths);
         bool UndoChanges(params string[] paths);
     }
 }
