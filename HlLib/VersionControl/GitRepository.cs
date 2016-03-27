@@ -97,10 +97,13 @@ namespace HlLib.VersionControl
             return false;
         }
 
-        public bool Checkout(string branch)
+        public bool Checkout(string branch, bool createOnLocal = false)
         {
             // checkout [branch]
-            return false;
+            var branchObj = (createOnLocal) ?
+                _repo.CreateBranch(branch) : _repo.Branches[branch];
+            branchObj = _repo.Checkout(branchObj);
+            return true;
         }
 
         public bool Push(string destBranch, string sourceBranch = null)
