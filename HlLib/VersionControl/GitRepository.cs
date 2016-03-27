@@ -49,11 +49,7 @@ namespace HlLib.VersionControl
             {
                 FetchOptions = new FetchOptions()
                 {
-                    CredentialsProvider = (url, usernameFromUrl, types) => new SecureUsernamePasswordCredentials()
-                    {
-                        Username = _username,
-                        Password = new SecureString().SetString(_password),
-                    },
+                    CredentialsProvider = (url, usernameFromUrl, types) => CreateCredentials(),
                 },
             };
 
@@ -112,15 +108,34 @@ namespace HlLib.VersionControl
             return true;
         }
 
-        public bool Push(string destBranch, string sourceBranch = null)
+        public bool Push(string branch = null)
         {
             // push
-            return false;
+            var branchObj = string.IsNullOrEmpty(branch) ?
+                _repo.Head
+                : _repo.Branches[branch];
+
+            var options = new PushOptions()
+            {
+                CredentialsProvider = (url, usernameFromUrl, types) => CreateCredentials(),
+            };
+
+            _repo.Network.Push(branchObj, options);
+            return true;
         }
 
         private Signature CreateSignature()
         {
             return new Signature(_username, _email, new DateTimeOffset(DateTime.Now));
+        }
+
+        private SecureUsernamePasswordCredentials CreateCredentials()
+        {
+            return new SecureUsernamePasswordCredentials()
+            {
+                Username = _username,
+                Password = new SecureString().SetString(_password),
+            };
         }
 
         #region IDisposable
