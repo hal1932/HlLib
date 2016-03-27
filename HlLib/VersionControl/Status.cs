@@ -10,7 +10,7 @@
         New,
     }
 
-    public class FileStatus
+    public abstract class FileStatus
     {
         public State State { get; internal set; }
         public string FilePath { get; internal set; }
