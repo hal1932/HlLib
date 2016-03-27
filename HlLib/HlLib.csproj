@@ -57,6 +57,7 @@
     <Compile Include="VersionControl\FileUpdateResult.cs" />
     <Compile Include="VersionControl\GitCommit.cs" />
     <Compile Include="VersionControl\GitFileStatus.cs" />
+    <Compile Include="VersionControl\GitFileUpdateResult.cs" />
     <Compile Include="VersionControl\GitRepository.cs" />
     <Compile Include="VersionControl\Commit.cs" />
     <Compile Include="VersionControl\IRepository.cs" />

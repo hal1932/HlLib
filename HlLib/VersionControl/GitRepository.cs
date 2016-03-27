@@ -65,7 +65,11 @@ namespace HlLib.VersionControl
         public bool AddFiles(params string[] paths)
         {
             // add
-            return false;
+            foreach (var path in paths)
+            {
+                _repo.Index.Add(path);
+            }
+            return true;
         }
 
         public bool CommitChanges(string message)
