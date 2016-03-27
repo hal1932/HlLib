@@ -7,5 +7,10 @@ namespace HlLib.VersionControl
     {
         IEnumerable<FileStatus> QueryFileStatuses();
         IEnumerable<Commit> QueryCommits();
+        void SetCredentials(string username, string email, string password);
+        bool UpdateLocalFiles();
+        bool AddFiles(params string[] paths);
+        bool CommitChanges(string message);
+        bool UndoChanges(params string[] paths);
     }
 }

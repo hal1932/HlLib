@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security;
 
 namespace HlLib.VersionControl
 {
@@ -12,6 +13,13 @@ namespace HlLib.VersionControl
             _repo = new Repository(path);
         }
 
+        public void SetCredentials(string username, string email, string password)
+        {
+            _username = username;
+            _email = email;
+            _password = password;
+        }
+
         public IEnumerable<FileStatus> QueryFileStatuses()
         {
             foreach (var entry in _repo.RetrieveStatus())
@@ -19,7 +27,7 @@ namespace HlLib.VersionControl
                 var state = GitFileStatus.GetState(entry);
                 if (state != State.Unknown)
                 {
-                    yield return new GitFileStatus(entry, state);
+                    yield return new GitFileStatus(state, entry.FilePath);
                 }
             }
         }
@@ -32,6 +40,51 @@ namespace HlLib.VersionControl
                     SortBy = CommitSortStrategies.Time,
                 })
                 .Select(commit => new GitCommit(commit, _repo));
+        }
+
+        public FileUpdateResult UpdateLocalFiles()
+        {
+            // pull
+            var options = new PullOptions()
+            {
+                FetchOptions = new FetchOptions()
+                {
+                    CredentialsProvider = (url, usernameFromUrl, types) => new SecureUsernamePasswordCredentials()
+                    {
+                        Username = _username,
+                        Password = new SecureString().SetString(_password),
+                    },
+                },
+            };
+            var signature = new Signature(_username, _email, new DateTimeOffset(DateTime.Now));
+            var result = _repo.Network.Pull(signature, options);
+
+            return new GitFileUpdateResult(result, _repo);
+        }
+
+        public bool AddFiles(params string[] paths)
+        {
+            return false;
+        }
+
+        public bool CommitChanges(string message)
+        {
+            return false;
+        }
+
+        public bool UndoChanges(params string[] paths)
+        {
+            return false;
+        }
+
+        public bool Checkout(string branch)
+        {
+            return false;
+        }
+
+        public bool Push(string destBranch, string sourceBranch = null)
+        {
+            return false;
         }
 
         #region IDisposable
@@ -71,5 +124,8 @@ namespace HlLib.VersionControl
         #endregion
 
         private Repository _repo;
+        private string _username;
+        private string _email;
+        private string _password;
     }
 }
