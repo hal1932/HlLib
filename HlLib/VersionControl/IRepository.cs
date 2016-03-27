@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HlLib.VersionControl
 {
-    public interface IVersionControl : IDisposable
+    public interface IRepository : IDisposable
     {
         IEnumerable<FileStatus> QueryFileStatuses();
         IEnumerable<Commit> QueryCommits();

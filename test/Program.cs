@@ -11,9 +11,9 @@ namespace test
     {
         static void Main(string[] args)
         {
-            var git = new Git(@"D:\home\Documents\Visual Studio 2015\Projects\HlLib");
+            var repo = new GitRepository(@"D:\home\Documents\Visual Studio 2015\Projects\HlLib");
 
-            foreach (GitCommit commit in git.QueryCommits())
+            foreach (GitCommit commit in repo.QueryCommits())
             {
                 Console.WriteLine(commit);
                 foreach (var diff in commit.QueryFileUpdates())
@@ -21,7 +21,7 @@ namespace test
                     Console.WriteLine("\t" + diff);
                 }
             }
-            foreach (var status in git.QueryFileStatuses())
+            foreach (var status in repo.QueryFileStatuses())
             {
                 Console.WriteLine(status);
             }
