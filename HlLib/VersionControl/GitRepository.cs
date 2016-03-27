@@ -23,34 +23,47 @@ namespace HlLib.VersionControl
 
         public IEnumerable<FileStatus> QueryFileUpdates()
         {
+            var updates = Enumerable.Empty<TreeEntryChanges>();
             foreach (var prevCommit in Commit.Parents)
             {
                 var changes = _repo.Diff.Compare<TreeChanges>(prevCommit.Tree, Commit.Tree);
-                foreach(var added in changes.Added)
+                updates = updates.Union(changes.Added)
+                    .Union(changes.Conflicted)
+                    .Union(changes.Deleted)
+                    .Union(changes.Modified)
+                    .Union(changes.Renamed)
+                    .Union(changes.TypeChanged);
+            }
+
+            foreach (var update in updates.Distinct(item => item.Path))
+            {
+                switch (update.Status)
                 {
-                    yield return new FileStatus(State.Added, added.Path);
-                }
-                foreach (var conflicted in changes.Conflicted)
-                {
-                    yield return new FileStatus(State.Conflicted, conflicted.Path);
-                }
-                foreach (var deleted in changes.Deleted)
-                {
-                    yield return new FileStatus(State.Deleted, deleted.Path);
-                }
-                foreach (var modified in changes.Modified)
-                {
-                    yield return new FileStatus(State.Modified, modified.Path);
-                }
-                foreach (var renamed in changes.Renamed)
-                {
-                    yield return new FileStatus(State.Deleted, renamed.OldPath);
-                    yield return new FileStatus(State.Added, renamed.Path);
-                }
-                foreach (var typeChanged in changes.TypeChanged)
-                {
-                    yield return new FileStatus(State.Deleted, typeChanged.OldPath);
-                    yield return new FileStatus(State.Added, typeChanged.Path);
+                    case ChangeKind.Added:
+                        yield return new FileStatus(State.Added, update.Path);
+                        break;
+
+                    case ChangeKind.Conflicted:
+                        yield return new FileStatus(State.Conflicted, update.Path);
+                        break;
+
+                    case ChangeKind.Deleted:
+                        yield return new FileStatus(State.Deleted, update.Path);
+                        break;
+
+                    case ChangeKind.Modified:
+                        yield return new FileStatus(State.Modified, update.Path);
+                        break;
+
+                    case ChangeKind.Renamed:
+                        yield return new FileStatus(State.Deleted, update.OldPath);
+                        yield return new FileStatus(State.Added, update.Path);
+                        break;
+
+                    case ChangeKind.TypeChanged:
+                        yield return new FileStatus(State.Deleted, update.OldPath);
+                        yield return new FileStatus(State.Added, update.Path);
+                        break;
                 }
             }
         }
@@ -84,9 +97,9 @@ namespace HlLib.VersionControl
         }
     }
 
-    public class Git : IVersionControl
+    public class GitRepository : IRepository
     {
-        public Git(string path)
+        public GitRepository(string path)
         {
             _repo = new Repository(path);
         }
@@ -117,7 +130,7 @@ namespace HlLib.VersionControl
         private bool _disposed;
         private object _disposingLock = new object();
 
-        ~Git()
+        ~GitRepository()
         {
             Dispose(false);
         }
