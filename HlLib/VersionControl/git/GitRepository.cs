@@ -1,4 +1,5 @@
-﻿using LibGit2Sharp;
+﻿using HlLib.Diagnostics;
+using LibGit2Sharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -146,6 +147,15 @@ namespace HlLib.VersionControl
             };
 
             _repo.Network.Push(branchObj, options);
+        }
+
+        public static int Execute(params string[] args)
+        {
+            return Process.OpenSync(new Process.OpenParam()
+            {
+                Command = "git.exe",
+                Arguments = args,
+            });
         }
 
         private Signature CreateSignature()
