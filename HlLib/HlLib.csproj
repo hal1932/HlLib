@@ -49,6 +49,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandLine\CommandLineOption.cs" />
+    <Compile Include="Diagnostics\Process.cs" />
+    <Compile Include="Disposable.cs" />
     <Compile Include="extensions\ArrayExtensions.cs" />
     <Compile Include="extensions\IEnumerableExtensions.cs" />
     <Compile Include="extensions\SecureStringExtensions.cs" />
