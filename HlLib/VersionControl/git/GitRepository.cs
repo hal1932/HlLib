@@ -1,5 +1,6 @@
 ﻿using HlLib.Diagnostics;
 using LibGit2Sharp;
+using LibGit2Sharp.Handlers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,7 +54,7 @@ namespace HlLib.VersionControl
             {
                 FetchOptions = new FetchOptions()
                 {
-                    CredentialsProvider = (url, usernameFromUrl, types) => CreateCredentials(),
+                    CredentialsProvider = CreateCredentials(),
                 },
             };
 
@@ -134,19 +135,17 @@ namespace HlLib.VersionControl
             branchObj = _repo.Checkout(branchObj);
         }
 
-        public void Push(string branch = null)
+        public void Push(string remote = "origin", string sourceBranch = null)
         {
             // push
-            var branchObj = string.IsNullOrEmpty(branch) ?
-                _repo.Head
-                : _repo.Branches[branch];
+            var remoteObj = _repo.Network.Remotes[remote];
 
             var options = new PushOptions()
             {
-                CredentialsProvider = (url, usernameFromUrl, types) => CreateCredentials(),
+                CredentialsProvider = CreateCredentials(),
             };
 
-            _repo.Network.Push(branchObj, options);
+            _repo.Network.Push(remoteObj, sourceBranch, options);
         }
 
         public static int Execute(params string[] args)
@@ -163,9 +162,9 @@ namespace HlLib.VersionControl
             return new Signature(_username, _email, new DateTimeOffset(DateTime.Now));
         }
 
-        private SecureUsernamePasswordCredentials CreateCredentials()
+        private CredentialsHandler CreateCredentials()
         {
-            return new SecureUsernamePasswordCredentials()
+            return (url, usernameFromUrl, types) => new SecureUsernamePasswordCredentials()
             {
                 Username = _username,
                 Password = new SecureString().SetString(_password),
