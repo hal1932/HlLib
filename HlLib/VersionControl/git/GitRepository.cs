@@ -8,6 +8,8 @@ namespace HlLib.VersionControl
 {
     public class GitRepository : IRepository
     {
+        public string HeadBranch { get { return _repo.Head.CanonicalName; } }
+
         public GitRepository(string path)
         {
             _repo = new Repository(path);
