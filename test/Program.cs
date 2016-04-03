@@ -11,20 +11,20 @@ namespace test
     {
         static void Main(string[] args)
         {
-            var repo = new GitRepository(@"D:\home\Documents\Visual Studio 2015\Projects\HlLib");
+            //var repo = new GitRepository(@"D:\home\Documents\Visual Studio 2015\Projects\HlLib");
 
-            foreach (GitCommit commit in repo.QueryCommits())
-            {
-                Console.WriteLine(commit);
-                foreach (var diff in commit.QueryFileUpdates())
-                {
-                    Console.WriteLine("\t" + diff);
-                }
-            }
-            foreach (var status in repo.QueryFileStatuses())
-            {
-                Console.WriteLine(status);
-            }
+            //foreach (GitCommit commit in repo.QueryCommits())
+            //{
+            //    Console.WriteLine(commit);
+            //    foreach (var diff in commit.QueryFileUpdates())
+            //    {
+            //        Console.WriteLine("\t" + diff);
+            //    }
+            //}
+            //foreach (var status in repo.QueryFileStatuses())
+            //{
+            //    Console.WriteLine(status);
+            //}
 
             Console.Read();
         }
