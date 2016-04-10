@@ -54,8 +54,8 @@ namespace test
             var database = new DatabaseTarget()
             {
                 DBHost = "localhost",
-                DBUserName = "root",
-                DBPassword = "",
+                DBUserName = "testuser",
+                DBPassword = "testuser",
                 DBDatabase = "test",
                 DBProvider = "MySql.Data.MySqlClient",
                 CommandType = CommandType.Text,
