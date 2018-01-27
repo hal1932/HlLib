@@ -6,16 +6,18 @@ using System.Reflection;
 namespace HlLib.Reflection
 {
     [Serializable]
-    [DebuggerDisplay("{Name}")]
+    [DebuggerDisplay("{Name.FullName}")]
     public class AssemblyReference : IEquatable<AssemblyReference>
     {
         public AssemblyName Name { get; }
+        public string Location { get; private set; }
         public int ReferenceDepth { get; internal set; }
         public IReadOnlyCollection<AssemblyName> Sources { get; }
 
-        internal AssemblyReference(Assembly assembly)
+        internal AssemblyReference(AssemblyName assemblyName, string location)
         {
-            Name = assembly.GetName();
+            Name = assemblyName;
+            Location = location;
             Sources = _sources.AsReadOnly();
         }
 
@@ -24,9 +26,14 @@ namespace HlLib.Reflection
             return Name.FullName == other?.Name.FullName;
         }
 
-        public void AddSource(Assembly assembly)
+        public void AddSource(AssemblyName assemblyName)
         {
-            _sources.Add(assembly.GetName());
+            _sources.Add(assemblyName);
+        }
+
+        public void SetLocation(string location)
+        {
+            Location = location;
         }
 
         private List<AssemblyName> _sources = new List<AssemblyName>();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -10,11 +11,25 @@ namespace HlLib.Reflection
     {
         public static IReadOnlyCollection<AssemblyReference> Resolve(string assemblyPath)
         {
-            var domainSetup = new AppDomainSetup() { ApplicationBase = Path.GetDirectoryName(assemblyPath) };
+            var domainSetup = new AppDomainSetup()
+            {
+                ApplicationBase = Path.GetDirectoryName(assemblyPath),
+            };
+
+            try
+            {
+                var config = ConfigurationManager.OpenExeConfiguration(assemblyPath);
+                domainSetup.ConfigurationFile = config.FilePath;
+            }
+            catch (ConfigurationErrorsException)
+            {
+                // 何もしない
+            }
+
             using (var scope = new ScopedAppDomain(Guid.NewGuid().ToString(), null, domainSetup))
             {
-                var proxy = (ResolverProxy)scope.Domain.CreateInstanceAndUnwrap(
-                    Assembly.GetExecutingAssembly().FullName,
+                var proxy = (ResolverProxy)scope.Domain.CreateInstanceFromAndUnwrap(
+                    Assembly.GetExecutingAssembly().Location,
                     typeof(ResolverProxy).FullName);
                 return proxy.Resolve(assemblyPath);
             }
@@ -38,23 +53,42 @@ namespace HlLib.Reflection
             while (queue.Count > 0)
             {
                 var item = queue.Dequeue();
-                foreach (var referenceName in item.Assembly.GetReferencedAssemblies())
+
+                var referenceNames = item.Assembly?.GetReferencedAssemblies() ?? Array.Empty<AssemblyName>();
+                foreach (var referenceName in referenceNames)
                 {
-                    var referencedAssembly = Assembly.Load(referenceName);
-                    var reference = new AssemblyReference(referencedAssembly);
+                    Assembly referencedAssembly = null;
+                    try
+                    {
+                        referencedAssembly = Assembly.Load(referenceName);
+                    }
+                    catch (Exception e)
+                    {
+                        // 何もしない
+                    }
+
+                    var reference = new AssemblyReference(referenceName, referencedAssembly?.Location);
 
                     var found = result.FirstOrDefault(x => x.Equals(reference));
                     if (found == null)
                     {
-                        reference.AddSource(item.Assembly);
+                        reference.AddSource(item.AssemblyName);
                         reference.ReferenceDepth = item.RefDepth + 1;
                         result.Add(reference);
 
-                        queue.Enqueue(new Item() { Assembly = referencedAssembly, RefDepth = item.RefDepth + 1 });
+                        queue.Enqueue(new Item()
+                        {
+                            Assembly = referencedAssembly,
+                            AssemblyName = referenceName,
+                            RefDepth = item.RefDepth + 1,
+                        });
                     }
                     else
                     {
-                        found.AddSource(item.Assembly);
+                        if (found.Location == null)
+                        {
+                        }
+                        found.AddSource(item.AssemblyName);
                     }
                 }
             }
@@ -65,6 +99,7 @@ namespace HlLib.Reflection
         private struct Item
         {
             public Assembly Assembly;
+            public AssemblyName AssemblyName;
             public int RefDepth;
         }
     }

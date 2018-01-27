@@ -23,7 +23,8 @@ namespace test
 
         static void AssemblyReferenceTest()
         {
-            var assemblyPath = Assembly.GetExecutingAssembly().Location;
+            //var assemblyPath = Assembly.GetExecutingAssembly().Location;
+            var assemblyPath = @"C:\Users\yuta\source\repos\WpfApp1\WpfApp1\bin\Debug\WpfApp1.exe";
             var references = AssemblyReferenceResolver.Resolve(assemblyPath);
             var r = references.OrderBy(x => x.Name.FullName).ToArray();
         }
