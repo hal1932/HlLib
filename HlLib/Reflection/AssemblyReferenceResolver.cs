@@ -76,9 +76,6 @@ namespace HlLib.Reflection
                     }
                     else
                     {
-                        if (found.Location == null)
-                        {
-                        }
                         found.AddSource(item.AssemblyName);
                     }
                 }
