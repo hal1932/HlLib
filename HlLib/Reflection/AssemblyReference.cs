@@ -9,15 +9,22 @@ namespace HlLib.Reflection
     [DebuggerDisplay("{Name.FullName}")]
     public class AssemblyReference : IEquatable<AssemblyReference>
     {
-        public AssemblyName Name { get; }
+        public AssemblyName Name { get; private set; }
         public string Location { get; private set; }
         public int ReferenceDepth { get; internal set; }
         public IReadOnlyCollection<AssemblyName> Sources { get; }
 
-        internal AssemblyReference(AssemblyName assemblyName, string location)
+        internal static AssemblyReference FromAssembly(Assembly assembly)
         {
-            Name = assemblyName;
-            Location = location;
+            return new AssemblyReference()
+            {
+                Name = assembly.GetName(),
+                Location = assembly.Location,
+            };
+        }
+
+        private AssemblyReference()
+        {
             Sources = _sources.AsReadOnly();
         }
 
@@ -26,14 +33,9 @@ namespace HlLib.Reflection
             return Name.FullName == other?.Name.FullName;
         }
 
-        public void AddSource(AssemblyName assemblyName)
+        internal void AddSource(Assembly assembly)
         {
-            _sources.Add(assemblyName);
-        }
-
-        public void SetLocation(string location)
-        {
-            Location = location;
+            _sources.Add(assembly.GetName());
         }
 
         private List<AssemblyName> _sources = new List<AssemblyName>();

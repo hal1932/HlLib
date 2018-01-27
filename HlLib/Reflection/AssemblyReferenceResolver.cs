@@ -54,29 +54,27 @@ namespace HlLib.Reflection
             {
                 var item = queue.Dequeue();
 
-                var referenceNames = item.Assembly?.GetReferencedAssemblies() ?? Array.Empty<AssemblyName>();
-                foreach (var referenceName in referenceNames)
+                foreach (var referenceName in item.Assembly.GetReferencedAssemblies())
                 {
                     var referencedAssembly = Assembly.Load(referenceName);
-                    var reference = new AssemblyReference(referenceName, referencedAssembly?.Location);
+                    var reference = AssemblyReference.FromAssembly(referencedAssembly);
 
                     var found = result.FirstOrDefault(x => x.Equals(reference));
                     if (found == null)
                     {
-                        reference.AddSource(item.AssemblyName);
+                        reference.AddSource(item.Assembly);
                         reference.ReferenceDepth = item.RefDepth + 1;
                         result.Add(reference);
 
                         queue.Enqueue(new Item()
                         {
                             Assembly = referencedAssembly,
-                            AssemblyName = referenceName,
-                            RefDepth = item.RefDepth + 1,
+                            RefDepth = reference.ReferenceDepth,
                         });
                     }
                     else
                     {
-                        found.AddSource(item.AssemblyName);
+                        found.AddSource(item.Assembly);
                     }
                 }
             }
@@ -87,7 +85,6 @@ namespace HlLib.Reflection
         private struct Item
         {
             public Assembly Assembly;
-            public AssemblyName AssemblyName;
             public int RefDepth;
         }
     }
