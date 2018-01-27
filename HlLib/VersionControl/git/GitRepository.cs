@@ -58,7 +58,7 @@ namespace HlLib.VersionControl
                 },
             };
 
-            var result = _repo.Network.Pull(CreateSignature(), options);
+            var result = Commands.Pull(_repo, CreateSignature(), options);
             return new GitFileUpdateResult(result, _repo);
         }
 
@@ -80,10 +80,7 @@ namespace HlLib.VersionControl
                 return new GitFileUpdateResult();
             }
 
-            foreach (var path in paths)
-            {
-                _repo.Stage(path);
-            }
+            Commands.Stage(_repo, paths);
 
             var author = CreateSignature();
             var commiter = author;
@@ -132,7 +129,7 @@ namespace HlLib.VersionControl
             // checkout [branch]
             var branchObj = (createOnLocal) ?
                 _repo.CreateBranch(branch) : _repo.Branches[branch];
-            branchObj = _repo.Checkout(branchObj);
+            branchObj = Commands.Checkout(_repo, branchObj);
         }
 
         public void Push(string remote = "origin", string sourceBranch = null)
