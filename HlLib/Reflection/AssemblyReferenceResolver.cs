@@ -57,16 +57,7 @@ namespace HlLib.Reflection
                 var referenceNames = item.Assembly?.GetReferencedAssemblies() ?? Array.Empty<AssemblyName>();
                 foreach (var referenceName in referenceNames)
                 {
-                    Assembly referencedAssembly = null;
-                    try
-                    {
-                        referencedAssembly = Assembly.Load(referenceName);
-                    }
-                    catch (Exception e)
-                    {
-                        // 何もしない
-                    }
-
+                    var referencedAssembly = Assembly.Load(referenceName);
                     var reference = new AssemblyReference(referenceName, referencedAssembly?.Location);
 
                     var found = result.FirstOrDefault(x => x.Equals(reference));
