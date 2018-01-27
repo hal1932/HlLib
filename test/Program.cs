@@ -1,4 +1,5 @@
-﻿using HlLib.VersionControl;
+﻿using HlLib.Reflection;
+using HlLib.VersionControl;
 using NLog;
 using NLog.Config;
 using NLog.Layouts;
@@ -8,6 +9,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,6 +18,20 @@ namespace test
     public class Program
     {
         static void Main(string[] args)
+        {
+            //NLogTest();
+            AssemblyReferenceTest();
+            Console.Read();
+        }
+
+        static void AssemblyReferenceTest()
+        {
+            var assemblyPath = Assembly.GetExecutingAssembly().Location;
+            var references = AssemblyReferenceResolver.Resolve(assemblyPath);
+            var r = references.OrderBy(x => x.Name.FullName).ToArray();
+        }
+
+        static void NLogTest()
         {
             var config = new LoggingConfiguration();
 
@@ -89,8 +105,6 @@ namespace test
                 logger.Fatal(e.ExceptionObject as Exception);
             };
             //throw new Exception("aaa");
-
-            Console.Read();
         }
     }
 }
